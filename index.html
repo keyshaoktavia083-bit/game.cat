@@ -1,34 +1,50 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LOMPAT LAVA 2 - Bisa Gerak!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Game Gerak</title>
 <style>
-  body{margin:0;background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:white;touch-action:none}
-  #game{width:360px;height:640px;background:linear-gradient(#16213e,#0f3460);position:relative;overflow:hidden;border-radius:20px;border:4px solid white}
-  #player{width:36px;height:36px;background:#ffbe0b;position:absolute;left:160px;top:300px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;z-index:10}
-  .pipa{width:60px;background:#e94560;position:absolute}
-  #score{font-size:28px;font-weight:bold;margin:8px}
-  #controls{display:flex;gap:20px;margin-top:12px}
-  .btn{width:70px;height:70px;background:rgba(255,255,255,0.2);border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;user-select:none}
-  .btn:active{background:#ffbe0b}
-  #over{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:20}
-  button.main{padding:12px 24px;border:none;border-radius:10px;background:#ffbe0b;font-weight:bold;font-size:18px}
+body{margin:0;background:#111;color:white;font-family:sans-serif;text-align:center;touch-action:none}
+#game{width:100%;max-width:380px;height:600px;background:#222;margin:10px auto;position:relative;overflow:hidden;border:3px solid #fff;border-radius:15px}
+#player{width:40px;height:40px;position:absolute;background:yellow;border-radius:8px;left:170px;top:500px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.pipa{position:absolute;width:60px;background:red}
+#joy{max-width:380px;margin:0 auto;display:flex;justify-content:space-between;padding:10px}
+.c{width:80px;height:80px;background:#333;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px}
+.c:active{background:yellow}
 </style>
 </head>
 <body>
-<div id="score">0</div>
-<div id="game">
-  <div id="player">🐱</div>
-  <div id="over"><h2>YAH KENA!</h2><p>Skor: <span id="final">0</span></p><button class="main" onclick="restart()">MAIN LAGI</button></div>
+<h3>Skor: <span id="sc">0</span></h3>
+<div id="game"><div id="player">🐱</div></div>
+<div id="joy">
+<div class="c" id="L">⬅️</div>
+<div class="c" id="J">⬆️</div>
+<div class="c" id="R">➡️</div>
 </div>
-<div id="controls">
-  <div class="btn" id="left">◀️</div>
-  <div class="btn" id="jump">⬆️</div>
-  <div class="btn" id="right">▶️</div>
-</div>
-<p>PC: A-D gerak, W/Spasi lompat</p>
 <script>
-let game=document.getElementById('game'), player=document.getElementById('player');
-let scoreEl=document.getElementById('score'),
+let p=document.getElementById('player'), g=document.getElementById('game');
+let sc=0, x=170, y=500, vx=0, vy=0, onGround=false;
+let keys={l:false,r:false};
+let obs=[];
+
+function createBlock(){
+ let b=document.createElement('div'); b.className='pipa';
+ b.style.left=Math.random()*300+'px'; b.style.top='-60px';
+ b.style.height='30px'; b.style.background='#0ff';
+ g.appendChild(b); obs.push({el:b,x:parseFloat(b.style.left),y:-60});
+}
+setInterval(createBlock,900);
+
+function loop(){
+ vy+=0.6; // gravitasi
+ x+=vx; y+=vy;
+ if(x<0) x=0; if(x>340) x=340;
+ if(y>560){ y=560; vy=0; onGround=true; } else onGround=false;
+
+ p.style.left=x+'px'; p.style.top=y+'px';
+
+ // gerak blok jatuh
+ for(let o of obs){
+  o.y+=3; o.el.style.top=o.y+'px';
+  if(o.x < x+40 && o.x+60 > x && o.y < y+
